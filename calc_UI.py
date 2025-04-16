@@ -1,5 +1,5 @@
 import tkinter as tk
-from ops import Addition, Subtraction, Division, Exponent, Square, Inverse, Multiplication
+from ops import Addition, Subtraction, Division, Exponent, Square, Inverse, Multiplication #add Ans when it's added to the ops file
 class Calculator():
     def __init__(self, root):
         self.bg_color = "#ffc0cb"
@@ -31,6 +31,7 @@ class Calculator():
             ['1','2','3', '-','√'],
             ['0', '.', '=', '+','Ans']
         ]
+        #Don't touch the holy buttons, for working with the layout makes me sad :(
 
         button_frame = tk.Frame(self.root,bg=self.bg_color)
         button_frame.pack(expand=True, fill='both')
@@ -50,12 +51,12 @@ class Calculator():
     def on_click(self, key):
         if key == "=":
             try:
-                for op in ['+', '-', '*', '÷', '^', '√', 'x⁻¹', 'Ans']:
+                for op in ['+', '-', '*', '÷', '^', '√', 'Ans']: #Need to add and fix perentesis
                     if op in self.expression:
                         a, b = self.expression.split(op)
                         a = float(a.strip())
                         b = float(b.strip())
-
+                        #calling all the operations from the ops file
                         if op == '+':
                             result = Addition(a, b).add()
                         elif op == '-':
@@ -68,11 +69,8 @@ class Calculator():
                             result = Exponent(a, b).exp()
                         elif op == '√':
                             result = Square(a).sqrt()
-                        elif op == 'x⁻¹':
-                            result = Inverse(a).inv()
-                        elif op == 'Ans':
-                            result = self.last_answer
-                        
+                        #elif op == 'Ans':
+                            #gotta add this to the ops file
                         break
                 else:
                     result = self.expression 
@@ -86,6 +84,18 @@ class Calculator():
             self.display.delete(0, tk.END)
             self.display.insert(tk.END, result)
         
+        elif key == "x⁻¹":
+            try:
+                current_value = eval(self.expression.replace('÷', '/').replace('^', '**'))
+                result = Inverse(current_value).inv()
+                self.expression = str(result)
+                self.display.delete(0, tk.END)
+                self.display.insert(tk.END, result)
+            except:
+                self.display.delete(0, tk.END)
+                self.display.insert(tk.END, "Error")
+                self.expression = ""
+
         elif key == "CE":
             self.expression = ""
             self.display.delete(0, tk.END)
