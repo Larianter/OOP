@@ -1,5 +1,5 @@
 import tkinter as tk
-import math
+from ops import Addition, Subtraction, Division, Exponent, Square, Inverse, Multiplication
 class Calculator():
     def __init__(self, root):
         self.bg_color = "#ffc0cb"
@@ -50,16 +50,36 @@ class Calculator():
     def on_click(self, key):
         if key == "=":
             try:
-                expression = self.expression.replace('^', '**').replace('÷', '/').replace('√', 'math.sqrt')
-                result = str(eval(expression))
-                self.last_answer = result
-                self.expression = result
-            except:
+                for op in ['+', '-', '*', '÷', '^']:
+                    if op in self.expression:
+                        a, b = self.expression.split(op)
+                        a = float(a.strip())
+                        b = float(b.strip())
+
+                        if op == '+':
+                            result = Addition(a, b).add()
+                        elif op == '-':
+                            result = Subtraction(a, b).sub()
+                        elif op == '*':
+                            result = Multiplication(a, b).mul()
+                        elif op == '÷':
+                            result = Division(a, b).div()
+                        elif op == '^':
+                            result = Exponent(a, b).exp()
+                        
+                        break
+                else:
+                    result = self.expression 
+
+                self.last_answer = str(result)
+                self.expression = self.last_answer
+            except Exception as e:
                 result = "Error"
                 self.expression = ""
+
             self.display.delete(0, tk.END)
             self.display.insert(tk.END, result)
-
+        
         elif key == "CE":
             self.expression = ""
             self.display.delete(0, tk.END)
@@ -71,8 +91,9 @@ class Calculator():
 
         elif key == "x²":
             try:
-                result = str(eval(self.expression + "**2"))
-                self.expression = result
+                a = float(self.expression)
+                result = Exponent(a, 2).exp()
+                self.expression = str(result)
                 self.display.delete(0, tk.END)
                 self.display.insert(tk.END, result)
             except:
@@ -82,8 +103,21 @@ class Calculator():
 
         elif key == "x⁻¹":
             try:
-                result = str(1 / eval(self.expression))
-                self.expression = result
+                a = float(self.expression)
+                result = Inverse(a).inv()
+                self.expression = str(result)
+                self.display.delete(0, tk.END)
+                self.display.insert(tk.END, result)
+            except:
+                self.display.delete(0, tk.END)
+                self.display.insert(tk.END, "Error")
+                self.expression = ""
+
+        elif key == "√":
+            try:
+                a = float(self.expression)
+                result = Square(a).sqrt()
+                self.expression = str(result)
                 self.display.delete(0, tk.END)
                 self.display.insert(tk.END, result)
             except:
