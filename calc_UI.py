@@ -50,7 +50,7 @@ class Calculator():
     def on_click(self, key):
         if key == "=":
             try:
-                for op in ['+', '-', '*', '÷', '^']:
+                for op in ['+', '-', '*', '÷', '^', '√', 'x⁻¹', 'Ans']:
                     if op in self.expression:
                         a, b = self.expression.split(op)
                         a = float(a.strip())
@@ -66,6 +66,12 @@ class Calculator():
                             result = Division(a, b).div()
                         elif op == '^':
                             result = Exponent(a, b).exp()
+                        elif op == '√':
+                            result = Square(a).sqrt()
+                        elif op == 'x⁻¹':
+                            result = Inverse(a).inv()
+                        elif op == 'Ans':
+                            result = self.last_answer
                         
                         break
                 else:
@@ -89,51 +95,9 @@ class Calculator():
             self.display.delete(0, tk.END)
             self.display.insert(tk.END, self.expression)
 
-        elif key == "x²":
-            try:
-                a = float(self.expression)
-                result = Exponent(a, 2).exp()
-                self.expression = str(result)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, result)
-            except:
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, "Error")
-                self.expression = ""
-
-        elif key == "x⁻¹":
-            try:
-                a = float(self.expression)
-                result = Inverse(a).inv()
-                self.expression = str(result)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, result)
-            except:
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, "Error")
-                self.expression = ""
-
-        elif key == "√":
-            try:
-                a = float(self.expression)
-                result = Square(a).sqrt()
-                self.expression = str(result)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, result)
-            except:
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, "Error")
-                self.expression = ""
-
-        elif key == "Ans":
-            self.expression += self.last_answer
-            self.display.delete(0, tk.END)
-            self.display.insert(tk.END, self.expression)
-
         else:
-            self.expression += str(key)
-            self.display.delete(0, tk.END)
-            self.display.insert(tk.END, self.expression)
+            self.expression += key
+            self.display.insert(tk.END, key)
 
 # Run the app
 if __name__ == "__main__":
