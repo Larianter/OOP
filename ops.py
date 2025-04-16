@@ -47,6 +47,19 @@ class Division(Operation):
     
     def __str__(self):
         return f"{self.a} / {self.b} = {self.result}"
+    
+class Multiplication(Operation):
+    def __init__(self,a,b):
+        super().__init__()
+        self.a = a
+        self.b = b
+
+    def mul(self):
+        self.result = self.a * self.b
+        return self.result
+
+    def __str__(self):
+        return f"{self.a} * {self.b} = {self.result}"
 
 class Exponent(Operation):
     def __init__(self,a,b):
