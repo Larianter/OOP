@@ -17,6 +17,7 @@ class Calculator():
             root, font=("Arial", 24), fg="black",
             borderwidth=2, relief="groove", justify='right',
         )
+        self.display.configure(state="disabled") # made sure the user can't edit the display
         self.display.pack(fill='both', ipadx=8, ipady=25, padx=10, pady=10)
 
 
