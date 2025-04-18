@@ -2,7 +2,7 @@ import tkinter as tk
 
 class Calculator():
     def __init__(self, root):
-        self.bg_color = "#ffc0cb" #As I get to do the UI, I'll decide the colours >:D
+        self.bg_color = "thistle2" #As I get to do the UI, I'll decide the colours >:D
         self.last_answer = ""
         self.root = root
         self.root.configure(bg=self.bg_color) 
@@ -40,7 +40,7 @@ class Calculator():
         for i, row in enumerate(button_layout):
             for j, val in enumerate(row):
                 button = tk.Button(
-                    button_frame, text=val, font=("Arial", 18), fg="black", command=lambda val=val: self.on_click(val),bg=self.bg_color, activebackground="#f4a7b9"
+                    button_frame, text=val, font=("Arial", 18), fg="black", command=lambda val=val: self.on_click(val),bg=self.bg_color, activebackground="rosybrown2"
                 )
                 button.grid(row=i, column=j, sticky="nsew", padx=1, pady=1)
 
