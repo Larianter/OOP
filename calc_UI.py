@@ -2,10 +2,10 @@ import tkinter as tk
 from ops import Addition, Subtraction, Division, Exponent, Square, Inverse, Multiplication #add Ans when it's added to the ops file
 class Calculator():
     def __init__(self, root):
-        self.bg_color = "#ffc0cb"
+        self.bg_color = "#ffc0cb" #As I get to do the UI, I'll decide the colours >:D
         self.last_answer = ""
         self.root = root
-        self.root.configure(bg=self.bg_color)
+        self.root.configure(bg=self.bg_color) 
         self.root.title("Calculator")
         self.root.geometry("400x500")
         self.root.resizable(False, False)
