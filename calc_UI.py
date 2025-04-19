@@ -1,10 +1,12 @@
 import tkinter as tk
 import ops
+from parser import CalcTransformer, calcGrammar
+from lark import Lark
 
 class Calculator():
     def __init__(self, root):
         self.bg_color = "thistle2" #As I get to do the UI, I'll decide the colours >:D
-        self.last_answer = ""
+        self.last_answer = "0"
         self.root = root
         self.root.configure(bg=self.bg_color) 
         self.root.title("Calculator")
@@ -12,6 +14,8 @@ class Calculator():
         self.root.resizable(False, False)
 
         self.expression = ""
+
+        self.parser = Lark(calcGrammar, parser="lalr", transformer=CalcTransformer(self.last_answer))
 
         # Display Entry
         self.display = tk.Entry(
@@ -27,7 +31,7 @@ class Calculator():
 
     def create_buttons(self):
         button_layout = [
-            [ ' (  ', ' )  ','CE','Del','^'],
+            [ '(', ')','CE','Del','^'],
             ['7','8','9', '÷','x²'],
             ['4','5','6', '*','x⁻¹'],
             ['1','2','3', '-','√'],
@@ -56,54 +60,20 @@ class Calculator():
         self.display.insert(tk.END, self.expression)
         self.display.configure(state='disabled')
 
-    def evaluate_expression(self, expr):
-        try:
-            expr = expr.strip()
-            if "√" in expr:
-                num = float(expr.replace("√", ""))
-                op = ops.Square(num)
-                return op.sqrt()
-
-            if "x²" in expr:
-                num = float(expr.replace("x²", ""))
-                op = ops.Exponent(num, 2)
-                return op.exp()
-
-            if "x⁻¹" in expr:
-                num = float(expr.replace("x⁻¹", ""))
-                op = ops.Inverse(num)
-                return op.inv()
-
-            for operator, cls, method_name in [
-                ('+', ops.Addition, 'add'),
-                ('-', ops.Subtraction, 'sub'),
-                ('*', ops.Multiplication, 'mul'),
-                ('÷', ops.Division, 'div'),
-                ('^', ops.Exponent, 'exp'),
-            ]:
-                if operator in expr:
-                    a, b = expr.split(operator)
-                    a = float(a.strip())
-                    b = float(b.strip())
-                    op = cls(a, b)
-                    return getattr(op, method_name)()
-                    
-            # fallback if no operator matched
-            return float(expr)
-
-        except Exception as e:
-            print("Evaluation error:", e)
-            return "Error"
-
     def on_click(self, value):
         if value == 'CE':
             self.expression = ""
         elif value == 'Del':
             self.expression = self.expression[:-1]
         elif value == '=':
-            result = self.evaluate_expression(self.expression)
-            self.last_answer = str(result)
-            self.expression = self.last_answer
+            try:
+                self.parser = Lark(calcGrammar, parser="lalr", transformer=CalcTransformer(self.last_answer))
+                result = self.parser.parse(self.expression)
+                self.last_answer = str(result)
+                self.expression = self.last_answer
+            except Exception as e:
+                print("Parse error:", e)
+                self.expression = "Error"
         elif value == 'Ans':
             self.expression += self.last_answer
         else:

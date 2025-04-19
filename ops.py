@@ -74,7 +74,7 @@ class Exponent(Operation):
     def __str__(self):
         return f"{self.a}^{self.b} = {self.result}"
 
-class Square(Operation):
+class Sqrt(Operation):
     def __init__(self,a):
         super().__init__()
         self.a = a
