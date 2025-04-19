@@ -1,4 +1,5 @@
 import tkinter as tk
+import ops
 
 class Calculator():
     def __init__(self, root):
@@ -37,17 +38,17 @@ class Calculator():
         button_frame = tk.Frame(self.root,bg=self.bg_color)
         button_frame.pack(expand=True, fill='both')
 
-        for i, row in enumerate(button_layout):
-            for j, val in enumerate(row):
+        for x, row in enumerate(button_layout):
+            for y, val in enumerate(row):
                 button = tk.Button(
                     button_frame, text=val, font=("Arial", 18), fg="black", command=lambda val=val: self.on_click(val),bg=self.bg_color, activebackground="rosybrown2"
                 )
-                button.grid(row=i, column=j, sticky="nsew", padx=1, pady=1)
+                button.grid(row=x, column=y, sticky="nsew", padx=1, pady=1)
 
-        for i in range(5):
-            button_frame.rowconfigure(i, weight=1)
-        for j in range(5):
-            button_frame.columnconfigure(j, weight=1)
+        for x in range(5):
+            button_frame.rowconfigure(x, weight=1)
+        for y in range(5):
+            button_frame.columnconfigure(y, weight=1)
 
     def update_display(self):
         self.display.configure(state='normal')
@@ -55,24 +56,56 @@ class Calculator():
         self.display.insert(tk.END, self.expression)
         self.display.configure(state='disabled')
 
+    def evaluate_expression(self, expr):
+        try:
+            expr = expr.strip()
+            if "√" in expr:
+                num = float(expr.replace("√", ""))
+                op = ops.Square(num)
+                return op.sqrt()
+
+            if "x²" in expr:
+                num = float(expr.replace("x²", ""))
+                op = ops.Exponent(num, 2)
+                return op.exp()
+
+            if "x⁻¹" in expr:
+                num = float(expr.replace("x⁻¹", ""))
+                op = ops.Inverse(num)
+                return op.inv()
+
+            for operator, cls, method_name in [
+                ('+', ops.Addition, 'add'),
+                ('-', ops.Subtraction, 'sub'),
+                ('*', ops.Multiplication, 'mul'),
+                ('÷', ops.Division, 'div'),
+                ('^', ops.Exponent, 'exp'),
+            ]:
+                if operator in expr:
+                    a, b = expr.split(operator)
+                    a = float(a.strip())
+                    b = float(b.strip())
+                    op = cls(a, b)
+                    return getattr(op, method_name)()
+                    
+            # fallback if no operator matched
+            return float(expr)
+
+        except Exception as e:
+            print("Evaluation error:", e)
+            return "Error"
+
     def on_click(self, value):
         if value == 'CE':
             self.expression = ""
         elif value == 'Del':
             self.expression = self.expression[:-1]
         elif value == '=':
-            try:
-                # Replace symbols with Python operators
-                expression = self.expression.replace('÷', '/').replace('x²', '**2').replace('√', '**0.5') \
-                                            .replace('^', '**').replace('x⁻¹', '**-1')
-                result = str(eval(expression))
-                self.last_answer = result
-                self.expression = result
-            except Exception:
-                self.expression = "Error"
+            result = self.evaluate_expression(self.expression)
+            self.last_answer = str(result)
+            self.expression = self.last_answer
         elif value == 'Ans':
             self.expression += self.last_answer
         else:
-            self.expression += value.strip()
-
+            self.expression += value
         self.update_display()
