@@ -22,8 +22,10 @@ class Calculator():
             root, font=("Arial", 24), fg="black",
             borderwidth=2, relief="groove", justify='right',
         )
-        history_button = tk.Button(root,text="History",command=self.show_history)
-        history_button.pack(pady=5)
+        top_frame = tk.Frame(self.root,bg=self.bg_color)
+        top_frame.pack(fill='x', padx=10, pady=(5, 0))
+        history_button = tk.Button(top_frame,text="History",command=self.show_history)
+        history_button.pack(side="right")
         self.history_data = []
         self.display.bind("<Key>", lambda event: self.history(event))
         self.display.bind("<Return>", self.history)
