@@ -22,12 +22,69 @@ class Calculator():
             root, font=("Arial", 24), fg="black",
             borderwidth=2, relief="groove", justify='right',
         )
+        history_button = tk.Button(root,text="History",command=self.show_history)
+        history_button.pack(pady=5)
+        self.history_data = []
+        self.display.bind("<Key>", lambda event: self.history(event))
+        self.display.bind("<Return>", self.history)
         self.display.configure(state="disabled") # made sure the user can't edit the display
         self.display.pack(fill='both', ipadx=8, ipady=25, padx=10, pady=10)
 
 
         # Button Layout
         self.create_buttons()
+
+    def history(self, event=None):
+        xx = self.display.get().strip()
+        list_partial_matches = []
+        if xx.strip() != "":
+            x = self.display.winfo_rootx()
+            y = self.display.winfo_rooty()
+            try:
+                self.top_menu.destroy()
+            except:
+                print ("No active top")
+
+            for item in self.history:
+                if xx in item:
+                    list_partial_matches.append(item)
+
+            if list_partial_matches != []:
+                self.top_menu = tk.Toplevel(self)
+                self.top_menu.geometry("+{}+{}".format(x, y+20))
+                self.top_menu.overrideredirect(1)
+                for item in list_partial_matches:
+                    btn = tk.Button(self.top_menu, text=item, highlightthickness=0, command= lambda i=item: self.select_word(i), anchor="w")
+                    btn.pack(fill="x")
+        else:
+            if self.top_menu != None:
+                self.top_menu.destroy()
+                self.top_menu = None
+
+    def record_history(self, event):
+        print ("test2")
+        x = self.display.get()
+        if x not in self.history:
+            self.history.append(x)
+
+    def show_history(self):
+        if hasattr(self, 'top_menu') and self.top_menu.winfo_exists():
+            self.top_menu.destroy()
+            return
+        self.top_menu = tk.Toplevel(self.root)
+        self.top_menu.title("History")
+        self.top_menu.geometry("200x300")
+        self.top_menu.configure(bg=self.bg_color)
+
+        for item in reversed(self.history_data):
+            btn = tk.Button(self.top_menu, text = item, anchor="w", bg="white", command= lambda i=item: self.select_word(i))
+            btn.pack(fill="x")
+
+    
+    def select_word(self, word):
+        self.display.delete(0, "end")
+        self.display.insert(0, word)
+        self.top_menu.destroy()
 
     def create_buttons(self):
         button_layout = [
@@ -70,6 +127,7 @@ class Calculator():
                 self.parser = Lark(calcGrammar, parser="lalr", transformer=CalcTransformer(self.last_answer))
                 result = self.parser.parse(self.expression)
                 self.last_answer = str(result)
+                self.history_data.append(f"{self.expression} = {self.last_answer}")
                 self.expression = self.last_answer
             except Exception as e:
                 print("Parse error:", e)
