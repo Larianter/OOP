@@ -1,11 +1,10 @@
 import tkinter as tk
-import ops
 from parser import CalcTransformer, calcGrammar
 from lark import Lark
 
 class Calculator():
     def __init__(self, root):
-        self.bg_color = "thistle2" #As I get to do the UI, I'll decide the colours >:D
+        self.bg_color = "thistle2" # As I get to do the UI, I'll decide the colours >:D
         self.last_answer = "0"
         self.root = root
         self.root.configure(bg=self.bg_color) 
@@ -15,7 +14,7 @@ class Calculator():
 
         self.expression = ""
 
-        self.parser = Lark(calcGrammar, parser="lalr", transformer=CalcTransformer(self.last_answer))
+        self.parser = Lark(calcGrammar, parser="lalr", transformer=CalcTransformer(self.last_answer)) # Initializing the parser
 
         # Display Entry
         self.display = tk.Entry(
@@ -26,7 +25,9 @@ class Calculator():
         top_frame.pack(fill='x', padx=10, pady=(5, 0))
         history_button = tk.Button(top_frame,text="History",command=self.show_history)
         history_button.pack(side="right")
-        self.history_data = []
+
+        self.history_data = [] # Storing calculator memory
+
         self.display.bind("<Key>", lambda event: self.history(event))
         self.display.bind("<Return>", self.history)
         self.display.configure(state="disabled") # made sure the user can't edit the display
@@ -63,12 +64,6 @@ class Calculator():
                 self.top_menu.destroy()
                 self.top_menu = None
 
-    def record_history(self, event):
-        print ("test2")
-        x = self.display.get()
-        if x not in self.history:
-            self.history.append(x)
-
     def show_history(self):
         if hasattr(self, 'top_menu') and self.top_menu.winfo_exists():
             self.top_menu.destroy()
@@ -88,13 +83,13 @@ class Calculator():
         self.display.insert(0, word)
         self.top_menu.destroy()
 
-    def create_buttons(self):
+    def create_buttons(self): # Creating calculator button UI
         button_layout = [
-            [ '(', ')','CE','Del','^'],
+            [' ( ', ' ) ','CE','Del','^'],
             ['7','8','9', '÷','x²'],
             ['4','5','6', '*','x⁻¹'],
             ['1','2','3', '-','√'],
-            ['0', '.', '=', '+','Ans']
+            ['0', '.', 'Ans', '+','=']
         ]
         #Don't touch the holy buttons, for working with the layout makes me sad :(
 
@@ -119,7 +114,7 @@ class Calculator():
         self.display.insert(tk.END, self.expression)
         self.display.configure(state='disabled')
 
-    def on_click(self, value):
+    def on_click(self, value): # Calculator logic
         if value == 'CE':
             self.expression = ""
         elif value == 'Del':

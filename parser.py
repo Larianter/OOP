@@ -1,6 +1,7 @@
 from lark import Lark, Transformer
 import ops
 
+# Lark grammar definition
 calcGrammar = """
     ?start: expr
 
@@ -28,6 +29,7 @@ calcGrammar = """
     %ignore WS
 """
 
+# Linking operations to parser
 class CalcTransformer(Transformer):
     def __init__(self,last_answer="0"):
         self.last_answer = float(last_answer)
