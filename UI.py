@@ -33,8 +33,6 @@ class Calculator():
 
         self.history_data = [] # Storing calculator memory
 
-        self.display.bind("<Key>", lambda event: self.history(event))
-        self.display.bind("<Return>", self.history)
         self.display.configure(state="disabled") # made sure the user can't edit the display
         self.display.pack(fill='both', ipadx=8, ipady=25, padx=10, pady=10)
 
@@ -70,12 +68,14 @@ class Calculator():
 
     
     def select_history(self, history):
-        self.display.configure(state='normal')
-        self.display.delete(0, "end")
-        selection = history
-        match = re.search(r'=\s*(-?\d+(?:\.\d+)?)', selection) # Regular expression to isolate the result
-        self.display.insert(0, match.group(1))                 # Return the first match
-        self.display.configure(state='disabled')
+        match = re.search(r'=\s*(-?\d+(?:\.\d+)?)', history) # Regular expression to isolate the result
+        if match: 
+            result = match.group(1)
+            self.expression = result #syncs internat state with the display
+            self.display.configure(state='normal')
+            self.display.delete(0, "end")
+            self.display.insert(0, result)                
+            self.display.configure(state='disabled')
         self.top_menu.destroy()
 
     def create_buttons(self): # Creating calculator button UI
