@@ -1,4 +1,9 @@
+# File name: UI.py
+# Author: Noora Pellinen, Lari Vainio
+# Description: Handles calculator UI and functionality
+
 import tkinter as tk
+import re
 from parser import CalcTransformer, calcGrammar
 from lark import Lark
 
@@ -39,26 +44,12 @@ class Calculator():
 
     def history(self, event=None):
         xx = self.display.get().strip()
-        list_partial_matches = []
         if xx.strip() != "":
-            x = self.display.winfo_rootx()
-            y = self.display.winfo_rooty()
             try:
                 self.top_menu.destroy()
             except:
                 print ("No active top")
 
-            for item in self.history:
-                if xx in item:
-                    list_partial_matches.append(item)
-
-            if list_partial_matches != []:
-                self.top_menu = tk.Toplevel(self)
-                self.top_menu.geometry("+{}+{}".format(x, y+20))
-                self.top_menu.overrideredirect(1)
-                for item in list_partial_matches:
-                    btn = tk.Button(self.top_menu, text=item, highlightthickness=0, command= lambda i=item: self.select_word(i), anchor="w")
-                    btn.pack(fill="x")
         else:
             if self.top_menu != None:
                 self.top_menu.destroy()
@@ -74,13 +65,17 @@ class Calculator():
         self.top_menu.configure(bg=self.bg_color)
 
         for item in reversed(self.history_data):
-            btn = tk.Button(self.top_menu, text = item, anchor="w", bg="white", command= lambda i=item: self.select_word(i))
+            btn = tk.Button(self.top_menu, text = item, anchor="w", bg="white", command= lambda i=item: self.select_history(i))
             btn.pack(fill="x")
 
     
-    def select_word(self, word):
+    def select_history(self, history):
+        self.display.configure(state='normal')
         self.display.delete(0, "end")
-        self.display.insert(0, word)
+        selection = history
+        match = re.search(r'=\s*(-?\d+(?:\.\d+)?)', selection) # Regular expression to isolate the result
+        self.display.insert(0, match.group(1))                 # Return the first match
+        self.display.configure(state='disabled')
         self.top_menu.destroy()
 
     def create_buttons(self): # Creating calculator button UI

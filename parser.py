@@ -1,4 +1,8 @@
-from lark import Lark, Transformer
+# File name: parser.py
+# Author: Lari Vainio
+# Description: String parser made with Lark to transform string into mathematical operations.
+
+from lark import Transformer
 import ops
 
 # Lark grammar definition
