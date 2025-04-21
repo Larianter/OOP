@@ -40,18 +40,6 @@ class Calculator():
         # Button Layout
         self.create_buttons()
 
-    def history(self, event=None):
-        xx = self.display.get().strip()
-        if xx.strip() != "":
-            try:
-                self.top_menu.destroy()
-            except:
-                print ("No active top")
-
-        else:
-            if self.top_menu != None:
-                self.top_menu.destroy()
-                self.top_menu = None
 
     def show_history(self):
         if hasattr(self, 'top_menu') and self.top_menu.winfo_exists():
